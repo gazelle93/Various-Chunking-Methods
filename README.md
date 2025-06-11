@@ -23,7 +23,7 @@ Chunking plays a critical role in balancing context preservation, retrieval prec
 | Recursive            | Uses hierarchical splitting rules    | Maintains structure             | Slower, heuristic-based          |
 | Sliding window       | Overlapping segments                 | High recall                     | Increases redundancy             |
 | Semantic             | Embedding-based or topic-aware       | Semantic coherence              | More complex to implement        |
-| Semantic             | Text-structure + semantic similarity       | Balanced, readable and coherent | More complex logic and slower    |
+| Hybrid             | Text-structure + semantic similarity       | Balanced, readable and coherent | More complex logic and slower    |
 
 
 ## Prerequisites
