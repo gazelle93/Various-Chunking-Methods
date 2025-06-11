@@ -27,8 +27,9 @@ Chunking plays a critical role in balancing context preservation, retrieval prec
 
 
 ## Prerequisites
-spacy
-nltk
-gensim
-sentence-transformers
-numpy
+- spacy
+- nltk
+- gensim
+- sentence-transformers
+- numpy
+- argparse
