@@ -1,6 +1,7 @@
 from utils import word_tokenization, sent_tokenization, split_by_separator
 from sentence_transformers import SentenceTransformer, util
 import numpy as np
+import regex as re
 
 # Fixed Size Chunking: split the text by whitespace / nltk word tokenizer / spacy text splitter / gensim word tokenizer
 def fixed_size_chunking(text, nlp_pipeline='None', splitting_method='whitespace', chunk_size=200, overlap=0):
@@ -31,12 +32,13 @@ def fixed_size_chunking(text, nlp_pipeline='None', splitting_method='whitespace'
 
 # Recursive Chunking
 def recursive_chunking(text, chunk_size=500):
+    separators = ["\n\n", "\n", ".", "?", "!", " ", ""]
     # If text is short enough, return it as a single chunk
     if len(text) <= chunk_size:
         return [text]
 
     # Try splitting by progressively smaller units
-    for sep in ["\n\n", "\n", ".", " ", ""]:
+    for sep in separators:
         split_list_of_text = split_by_separator(text, sep)
         chunks = []
         buffer = ""
@@ -61,7 +63,6 @@ def recursive_chunking(text, chunk_size=500):
             return chunks
 
     return [text]
-
 
 # Sliding Window Chunking
 def sliding_window_chunking(text, nlp_pipeline='None', splitting_method='whitespace', chunk_size=200, step_size=100):
