@@ -1,6 +1,5 @@
 import spacy
 import nltk
-import gensim
 import re
 
 
@@ -14,6 +13,13 @@ def get_nlp_pipeline(_nlp_pipeline):
             # Try loading again after download
             return spacy.load("en_core_web_sm")
 
+def check_nltk():
+    try:
+        nltk.data.find('tokenizers/punkt_tab')
+        print("NLTK 'punkt_tab' resource is already downloaded.")
+    except LookupError:
+        print("NLTK 'punkt_tab' resource not found. Downloading...")
+        nltk.download('punkt_tab')
 
 
 def word_tokenization(_input_text, nlp, _nlp_pipeline='whitespace', _lower=False):
@@ -25,10 +31,8 @@ def word_tokenization(_input_text, nlp, _nlp_pipeline='whitespace', _lower=False
         return [token.text for token in doc]
 
     elif _nlp_pipeline == "nltk":
+        check_nltk()
         return nltk.tokenize.word_tokenize(_input_text)
-
-    elif _nlp_pipeline == "gensim":
-        return list(gensim.utils.tokenize(_input_text))
 
     else:
         return _input_text.split()
@@ -36,6 +40,7 @@ def word_tokenization(_input_text, nlp, _nlp_pipeline='whitespace', _lower=False
 
 def sent_tokenization(_input_text, nlp, _nlp_pipeline='regex'):
     if _nlp_pipeline == "nltk":
+        check_nltk()
         return nltk.sent_tokenize(_input_text)
 
     elif _nlp_pipeline == "spacy":
@@ -50,6 +55,9 @@ def sent_tokenization(_input_text, nlp, _nlp_pipeline='regex'):
 
 # Helper function to split text by a separator and preserve the separator
 def split_by_separator(_input_text, separator):
+    if separator == "":
+        return list(_input_text)
+    
     parts = _input_text.split(separator)
     # Add back the separator to each part for consistency
     return [p.strip() + separator for p in parts if p.strip()]
