@@ -13,7 +13,7 @@ Chunking plays a critical role in balancing context preservation, retrieval prec
   - Sliding chunking
   - Semantic chunking
   - Hybrid chunking
-- `utils/`: Utility functions shared across modules.
+- `utils.py`: Utility functions shared across modules.
 
 ## Methods Compared
 
