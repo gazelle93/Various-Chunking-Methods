@@ -32,4 +32,3 @@ Chunking plays a critical role in balancing context preservation, retrieval prec
 - gensim
 - sentence-transformers
 - numpy
-- argparse
