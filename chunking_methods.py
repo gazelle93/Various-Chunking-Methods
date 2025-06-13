@@ -1,5 +1,5 @@
-from utils import word_tokenization, sent_tokenization, split_by_separator
-from sentence_transformers import SentenceTransformer, util
+from utils import word_tokenization, sent_tokenization, split_by_separator, get_embedding, get_clutering_output
+from sentence_transformers import util
 import numpy as np
 import regex as re
 
@@ -86,16 +86,28 @@ def sliding_window_chunking(text, nlp_pipeline='None', splitting_method='whitesp
 
     return chunks
 
+# Topic Chunking
+def topic_chunking(list_of_sentences, embeddings, clustering_method='kmeans', num_clusters=2, min_samples=2):
+    labels = get_clutering_output(embeddings, clustering_method, num_clusters, min_samples)
+
+    clustered_sentences = []
+    current_cluster = labels[0]
+    current_chunk = []
+
+    for label, sentence in zip(labels, list_of_sentences):
+        if label != current_cluster and current_chunk:
+            clustered_sentences.append(" ".join(current_chunk))
+            current_chunk = []
+            current_cluster = label
+        current_chunk.append(sentence)
+
+    if current_chunk:
+        clustered_sentences.append(" ".join(current_chunk))
+
+    return clustered_sentences
+
 # Semantic Chunking
-def semantic_chunking(text, sent_transformer_model='all-MiniLM-L6-v2', nlp_pipeline='None', splitting_method='regex', sent_chunk_size=5):
-    list_of_sentences = sent_tokenization(text, nlp_pipeline, splitting_method)
-
-    # Load a pre-trained sentence transformer model
-    model = SentenceTransformer(sent_transformer_model)
-
-    # Convert each sentence into an embedding
-    embeddings = model.encode(list_of_sentences)
-
+def semantic_chunking(list_of_sentences, embeddings, sent_chunk_size=5):
     chunks = []
     current_chunk = []
 
@@ -114,20 +126,13 @@ def semantic_chunking(text, sent_transformer_model='all-MiniLM-L6-v2', nlp_pipel
 
 
 # Hybrid Chunking
-def hybrid_chunking(text, sent_transformer_model='all-MiniLM-L6-v2', nlp_pipeline='None', splitting_method='regex', sent_chunk_size=5, similarity_threshold=0.75):
-    sentences = sent_tokenization(text, nlp_pipeline, splitting_method)
-
-    # Load a pre-trained sentence transformer model
-    model = SentenceTransformer(sent_transformer_model)
-
-    embeddings = model.encode(sentences, convert_to_tensor=True)
-
+def hybrid_chunking(list_of_sentences, embeddings, sent_chunk_size=5, similarity_threshold=0.75):
     chunks = []
-    current_chunk = [sentences[0]]
-    for i in range(1, len(sentences)):
+    current_chunk = [list_of_sentences[0]]
+    for i in range(1, len(list_of_sentences)):
         # Compare similarity with the last sentence in the current chunk
         sim = util.pytorch_cos_sim(embeddings[i], embeddings[i-1]).item()
-        current_chunk.append(sentences[i])
+        current_chunk.append(list_of_sentences[i])
 
         # Start a new chunk if similarity drops or max size is hit
         if sim < similarity_threshold or len(current_chunk) >= sent_chunk_size:

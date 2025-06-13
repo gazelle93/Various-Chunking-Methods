@@ -11,6 +11,7 @@ Chunking plays a critical role in balancing context preservation, retrieval prec
   - Fixed-size chunking
   - Recursive chunking
   - Sliding chunking
+  - Topic-based chunking
   - Semantic chunking
   - Hybrid chunking
 - `utils.py`: Utility functions shared across modules.
@@ -22,13 +23,15 @@ Chunking plays a critical role in balancing context preservation, retrieval prec
 | Fixed-size           | Uniform length split                 | Simple, fast                    | Can break semantic units         |
 | Recursive            | Uses hierarchical splitting rules    | Maintains structure             | Slower, heuristic-based          |
 | Sliding window       | Overlapping segments                 | High recall                     | Increases redundancy             |
+| Topic-based	| Clusters sentences by semantic similarity 	| Groups text by meaningful topics |	Requires embedding + clustering; variable chunk sizes |
 | Semantic             | Embedding-based or topic-aware       | Semantic coherence              | More complex to implement        |
 | Hybrid             | Text-structure + semantic similarity       | Balanced, readable and coherent | More complex logic and slower    |
+
 
 
 ## Prerequisites
 - spacy
 - nltk
-- gensim
 - sentence-transformers
 - numpy
+- scikit-learn
